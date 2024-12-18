@@ -1,22 +1,17 @@
 <script>
-    import { page } from '$app/stores';
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
 
     const { folder, svg } = $page.params;
-
     let svgContent = '';
 
-    // Fetch SVG on the client-side after the component mounts
+    // Fetch the SVG content only on the client side
     onMount(async () => {
-        try {
-            const response = await fetch(`/Classes/${folder}/${svg}.svg`);
-            if (response.ok) {
-                svgContent = await response.text();
-            } else {
-                console.error('Failed to load SVG:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching SVG:', error);
+        const response = await fetch(`/HEPIA_SVG/Classes/${folder}/${svg}.svg`);
+        if (response.ok) {
+            svgContent = await response.text();
+        } else {
+            console.error('Failed to load SVG:', response.statusText);
         }
     });
 </script>
