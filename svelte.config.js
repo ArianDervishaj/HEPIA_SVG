@@ -6,7 +6,10 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapterStatic(),
+		adapter: adapterStatic({
+			fallback: 'index.html'
+		}),
+		
 		paths: {
 			base: process.env.NODE_ENV === 'production' ? '/HEPIA_SVG' : ''
 		},

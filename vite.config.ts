@@ -6,5 +6,10 @@ export default defineConfig({
 
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
+	},
+
+	ssr: {
+		// Exclude 'fs' and 'path' during SSR to prevent bundling errors
+		external: ['fs', 'path']
 	}
 });

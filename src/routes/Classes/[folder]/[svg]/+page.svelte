@@ -1,35 +1,40 @@
 <script>
     import { page } from '$app/stores';
     import { onMount } from 'svelte';
-    import panzoom from 'panzoom';
 
-    const folder = $page.params.folder;
-    const svg = $page.params.svg;
-    const svgPath = `/Classes/${folder}/${svg}.svg`;
+    const { folder, svg } = $page.params;
 
-    let panzoomInstance;
+    let svgContent = '';
 
-    onMount(() => {
-        const svgObject = document.getElementById('svg-object');
-        svgObject.onload = () => {
-            const svgDoc = svgObject.contentDocument;
-            const svgElement = svgDoc.querySelector('svg');
-            panzoomInstance = panzoom(svgElement);
-        };
+    // Fetch SVG on the client-side after the component mounts
+    onMount(async () => {
+        try {
+            const response = await fetch(`/Classes/${folder}/${svg}.svg`);
+            if (response.ok) {
+                svgContent = await response.text();
+            } else {
+                console.error('Failed to load SVG:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching SVG:', error);
+        }
     });
-
-    const zoomIn = () => panzoomInstance?.zoomIn();
-    const zoomOut = () => panzoomInstance?.zoomOut();
-    const reset = () => panzoomInstance?.reset();
 </script>
 
 <h1>{svg}</h1>
-<div class="controls">
-    <button on:click={zoomIn}>Zoom In</button>
-    <button on:click={zoomOut}>Zoom Out</button>
-    <button on:click={reset}>Reset</button>
-</div>
-<div>
-    <object id="svg-object" data={svgPath} type="image/svg+xml" title={svg}></object>
-</div>
-<a href={`/Classes/${folder}`}>Back to {folder}</a>
+
+{#if svgContent}
+    <!-- Render the SVG content inline -->
+    <div class="svg-container">
+        {@html svgContent}
+    </div>
+{:else}
+    <p>Loading SVG...</p>
+{/if}
+
+<style>
+    .svg-container {
+        width: 100%;
+        height: 600px;
+    }
+</style>
